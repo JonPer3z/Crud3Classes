@@ -13,9 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Produto {
+
     @Id
     private Integer idProduto;
     private String nome;
     private String tipo;
     private Number preco;
+
 }
