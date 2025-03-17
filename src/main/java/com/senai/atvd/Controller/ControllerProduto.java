@@ -28,16 +28,18 @@ public class ControllerProduto {
         return ProdRepository.findAll();
     }
 
-    @PutMapping("/Produto/atualizar{id}")
-    public boolean atualizarProfessor(@PathVariable Integer id, @RequestBody Produto p) {
-        if (!ProdRepository.existsById(p.getIdProduto())) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND).hasBody();
+    @PutMapping("/Produto/atualizar/{id}")
+    public ResponseEntity<Boolean> atualizarProfessor(@PathVariable Integer id, @RequestBody Produto p) {
+        if (!ProdRepository.existsById(id)) {
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
-        p.setIdProduto(p.getIdProduto());
-        Produto atualizado = ProdRepository.save(p);
 
-        return new ResponseEntity<>(true, HttpStatus.OK).hasBody();
+        p.setIdProduto(id);
+        ProdRepository.save(p);
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/Produto/deletar{id}")
     public void deletarProduto (@PathVariable Integer id) {
