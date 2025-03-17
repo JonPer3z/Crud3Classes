@@ -14,5 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Produto {
     @Id
-    private Integer id;
+    private Integer idProduto;
+    private String nome;
+    private String tipo;
+    private Number preco;
 }
