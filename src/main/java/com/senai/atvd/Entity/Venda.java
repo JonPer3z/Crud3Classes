@@ -19,8 +19,9 @@ public class Venda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Produto> produtos;
+    private List<Produto> produto;
 
     @OneToOne
     @JoinColumn(name = "id_cliente")
