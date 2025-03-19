@@ -8,59 +8,55 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/Cliente")
+@RequestMapping("/clientes")
 public class ControllerCliente {
 
     @Autowired
     private ClienteRepository clienteRepository;
 
-    // Adicionar um cliente
-    @PostMapping("/add")
-    public ResponseEntity<Boolean> adicionarCliente(@RequestBody Cliente cliente) {
-        if (cliente.getNome() == null || cliente.getTelefone() == null) {
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST); // Retorna erro 400 se faltarem campos obrigatórios
-        }
-        clienteRepository.save(cliente);
-        return new ResponseEntity<>(true, HttpStatus.CREATED); // Retorna 201 (Created) se a operação for bem-sucedida
-    }
-
-    // Obter todos os clientes
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Cliente>> getTodosClientes() {
+    // 1. GET: Listar todos os clientes
+    @GetMapping
+    public ResponseEntity<List<Cliente>> getAllClientes() {
         List<Cliente> clientes = clienteRepository.findAll();
-        return new ResponseEntity<>(clientes, HttpStatus.OK); // Retorna a lista de clientes com status 200
+        return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
-    // Obter um cliente por ID
-    @GetMapping("/get/{id}")
-    public ResponseEntity<Cliente> getCliente(@PathVariable Long id) {
-        Cliente cliente = clienteRepository.findById(id).orElse(null);
-        if (cliente == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o cliente não for encontrado
-        }
-        return new ResponseEntity<>(cliente, HttpStatus.OK);
+    // 2. GET: Obter um cliente pelo ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
+        Optional<Cliente> cliente = clienteRepository.findById(id);
+        return cliente.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Atualizar um cliente existente
-    @PutMapping("/atualizar/{id}")
-    public ResponseEntity<Boolean> atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
-        if (!clienteRepository.existsById(id)) {
-            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND); // Retorna 404 se o cliente não for encontrado
-        }
-        cliente.setIdCliente(id);  // Assume que o método setIdCliente existe
-        clienteRepository.save(cliente);
-        return new ResponseEntity<>(true, HttpStatus.OK); // Retorna 200 se a atualização for bem-sucedida
+    // 3. POST: Criar um novo cliente
+    @PostMapping
+    public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
+        Cliente savedCliente = clienteRepository.save(cliente);
+        return new ResponseEntity<>(savedCliente, HttpStatus.CREATED);
     }
 
-    // Deletar um cliente por ID
-    @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<Void> deletarCliente(@PathVariable Long id) {
-        if (!clienteRepository.existsById(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o cliente não for encontrado
+    // 4. PUT: Atualizar um cliente existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
+        if (clienteRepository.existsById(id)) {
+            cliente.setIdCliente(id);
+            Cliente updatedCliente = clienteRepository.save(cliente);
+            return ResponseEntity.ok(updatedCliente);
         }
-        clienteRepository.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Retorna 204 após a exclusão bem-sucedida
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    // 5. DELETE: Deletar um cliente pelo ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
