@@ -1,7 +1,6 @@
 package com.senai.atvd.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -11,7 +10,12 @@ import lombok.*;
 @Entity
 public class Cliente {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCliente;
     private String nome;
     private String telefone;
+
+    @OneToOne(mappedBy = "cliente")
+    private Venda venda;
+
 }
