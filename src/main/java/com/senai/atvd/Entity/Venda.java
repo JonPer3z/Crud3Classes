@@ -19,6 +19,7 @@ public class Venda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idVenda;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Produto> produto;
@@ -27,7 +28,5 @@ public class Venda {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-
-    private Integer idVenda;
     private LocalDate dataDeVenda;
 }

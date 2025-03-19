@@ -9,14 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/Venda")
 public class VendaController {
+    @Autowired
+    private VendaRepository vendaRepository;
 
-    @RestController
-    @RequestMapping("/Venda")
-    public class ControllerVenda {
-
-        @Autowired
-        private VendaRepository vendaRepository;
 
         // Adicionar uma venda
         @PostMapping("/add")
@@ -33,7 +31,7 @@ public class VendaController {
 
         // Obter uma venda por ID
         @GetMapping("/get/{id}")
-        public ResponseEntity<Venda> getVenda(@PathVariable Integer id) {
+        public ResponseEntity<Venda> getVenda(@PathVariable Long id) {
             if (!vendaRepository.existsById(id)) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -43,7 +41,7 @@ public class VendaController {
 
         // Atualizar uma venda existente
         @PutMapping("/atualizar/{id}")
-        public ResponseEntity<Boolean> atualizarVenda(@PathVariable Integer id, @RequestBody Venda venda) {
+        public ResponseEntity<Boolean> atualizarVenda(@PathVariable Long id, @RequestBody Venda venda) {
             if (!vendaRepository.existsById(id)) {
                 return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
             }
@@ -56,7 +54,7 @@ public class VendaController {
 
         // Deletar uma venda por ID
         @DeleteMapping("/deletar/{id}")
-        public ResponseEntity<Void> deletarVenda(@PathVariable Integer id) {
+        public ResponseEntity<Void> deletarVenda(@PathVariable Long id) {
             if (!vendaRepository.existsById(id)) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -64,4 +62,3 @@ public class VendaController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-}
